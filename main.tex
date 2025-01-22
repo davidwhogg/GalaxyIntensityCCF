@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\title{\bfseries%
+The projected three-dimensional cross-correlation of electromagnetic intensity and galaxies}
+\author{student \and Lang \and Hogg}
+\date{2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Stuff about clusters, quasars, galaxies, stars, dust, gas, and DM all being shown to be strongly correlated with galaxies, out to large radii.
+
+Why do electromagnetic intensity? Because we can. And it is a fundamental invariant of electromagnetism in a transparent universe.
+
+Note that we are using sky spectra here. But we could be using ANY spectra, provided that we can subtract out of them their principal targets, and those principal targets are either background to, or else transparent to, the redshifts we want to investigate.
+
+\section{Setup and assumptions}
+We have a catalog from a redshift survey of galaxies, which contains $M$ galaxies $j$, with $1\leq j\leq M$, each of which has an accurately measured two-dimensional angular position $\alpha_j$, an accurately measured redshift $z_j$, and a set of other measured properties $Q_j$ (which might include luminosity, color, star-formation rate, stellar mass, or other measurements or inferences).
+We will assume that this sample is well selected and has sensible properties for the purposes of subsequent interpretations of the signals we find.
+Interestingly, we do not need to know what's commonly called the ``window function'' for this sample; we don't need to know what sky footprint was used for the selection of the sample.
+Also, we are using the word ``galaxy'' but these could be quasars or x-ray selected clusters or any other kinds of cosmological objects.
+
+In addition, we have a set of $N$ spectra $f_i$, with $1\leq i\leq N$, taken at known two-dimensional sky positions $\alpha_i$.
+We will assume that these spectra are (at least approximately) wavelength calibrated, spectro-photometrically calibrated, and sky-subtracted.
+The spectro-photometric calibration requirements are not strong, but the project will work better as the spectra get closer to being calibrated.
+We will think of the spectra as being calibrated in either flux units (energy per time per area per log-wavelength interval) or else intensity units (flux units per solid angle of the fiber or aperture); since these are related by the solid-angles of the spectral apertures, we can convert everything to intensity units, and we will.
+Alternatively, the spectra could be in photon phase-space density units---this is also an invariant---but we will stay classical in what follows.
+The wavelength-calibration and sky-subtraction requirements are relatively strong however:
+Variance in wavelength calibration and sky subtraction will reduce the signal-to-noise of the signals we seek.
+
+The most important assumption we will make about these $N$ spectra is that the celestial positions $\alpha_i$ at which the spectra were taken are not directly related---neither biased towards or away from---the celestial positions $\alpha_j$ at which the galaxies are found.
+That is, there is a statistical independence of the ``footprints'' of the galaxy catalog and the spectral placement.
+
+HOGG: There is a two-point function in real space. There is a two-point function in redshift space. There are projections of this that are observable, and which are measured and then deprojected in present-day large-scale structure projects. This is what we will measure.
+
+HOGG: Note that everything is linear in the galaxies, and everything is linear in the spectra. So you can see this project as a sum over galaxies of one-galaxy surveys. Or a sum over spectra of one-spectrum measurements.
+
+In addition, we will assume that the background cosmological model is known precisely enough, and there are not pathologies like strong lensing significantly in play.
+
+\section{Methods and results}
+HOGG: 
+
+\section{Discussion}
+
+\paragraph{Acknowledgements}
+
+\end{document}
