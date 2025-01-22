@@ -1,6 +1,14 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
 
+% typesetting generalities
+\sloppy\sloppypar\raggedbottom
+\frenchspacing % Don't even think about removing this.
+\pagestyle{myheadings}
+\markboth{foo}{\scshape%
+the galaxy--intensity cross-correlation function}
+\bibliographystyle{plain}
+
 \title{\bfseries%
 The projected three-dimensional cross-correlation of electromagnetic intensity and galaxies}
 \author{student \and Lang \and Hogg}
@@ -22,6 +30,8 @@ We have a catalog from a redshift survey of galaxies, which contains $M$ galaxie
 We will assume that this sample is well selected and has sensible properties for the purposes of subsequent interpretations of the signals we find.
 Interestingly, we do not need to know what's commonly called the ``window function'' for this sample; we don't need to know what sky footprint was used for the selection of the sample.
 Also, we are using the word ``galaxy'' but these could be quasars or x-ray selected clusters or any other kinds of cosmological objects.
+
+HOGG: ACTUALLY that's not quite true, because we also need a RANDOM catalog of not-galaxies with not-redshifts.
 
 In addition, we have a set of $N$ spectra $f_i$, with $1\leq i\leq N$, taken at known two-dimensional sky positions $\alpha_i$.
 We will assume that these spectra are (at least approximately) wavelength calibrated, spectro-photometrically calibrated, and sky-subtracted.
@@ -45,6 +55,8 @@ HOGG:
 
 \section{Discussion}
 
-\paragraph{Acknowledgements}
+\paragraph{Acknowledgments}
+
+\bibliography{ccf}
 
 \end{document}
