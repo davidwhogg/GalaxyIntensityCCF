@@ -16,8 +16,9 @@ the galaxy--intensity cross-correlation function}
 \newcommand{\set}[1]{\mathscr{#1}}
 
 \title{\bfseries%
+Broken and forsaken robots:\\
 The projected three-dimensional cross-correlation of electromagnetic intensity and galaxies}
-\author{student \and Lang \and Hogg}
+\author{El-Falou \and Lang \and Hogg}
 \date{2025}
 
 \begin{document}
@@ -80,10 +81,11 @@ Fundamentally, the method is
 where $w_m(\ln\lambda)$ is the value of the two-dimensional projected real-space cross-correlation function (between intensity and galaxies) as a function of wavelength $\lambda$ in a projected real-space perpendicular radius bin indexed by $m$.
 The four terms on the RHS are defined as
 \begin{align}
-    DD_m(\ln\lambda) &= \sum_{j=1}^{M}\sum_{i=1}^N I(r_{m-1}<D_{A,j}\,|\alpha_i-\alpha_j|\leq r_m)\,f_i(\ln\lambda-\Delta_j) \\
-    DR_m(\ln\lambda) &= \frac{1}{\beta}\,\sum_{j=1}^{M}\sum_{k=1}^{\beta N} I(r_{m-1}<D_{A,j}\,|\alpha_k-\alpha_j|\leq r_m)\,f_k(\ln\lambda-\Delta_j) \\
-    RD_m(\ln\lambda) &= \frac{1}{\beta}\,\sum_{k=1}^{\beta M}\sum_{i=1}^N I(r_{m-1}<D_{A,k}\,|\alpha_i-\alpha_k|\leq r_m)\,f_i(\ln\lambda-\Delta_k) \\
-    RR_m(\ln\lambda) &= \frac{1}{\beta^2}\,\sum_{k=1}^{\beta M}\sum_{k'=1}^{\beta N} I(r_{m-1}<D_{A,k}\,|\alpha_{k'}-\alpha_k|\leq r_m)\,f_{k'}(\ln\lambda-\Delta_k) ~,
+    DD_m(\ln\lambda) &= \sum_{j=1}^{M}\sum_{i=1}^N I(i,j;m)\,f_i(\ln\lambda-\Delta_j) \\
+    DR_m(\ln\lambda) &= \frac{1}{\beta}\,\sum_{j=1}^{M}\sum_{k=1}^{\beta N} I(k,j;m)\,f_k(\ln\lambda-\Delta_j) \\
+    RD_m(\ln\lambda) &= \frac{1}{\beta}\,\sum_{k=1}^{\beta M}\sum_{i=1}^N I(i,k;m)\,f_i(\ln\lambda-\Delta_k) \\
+    RR_m(\ln\lambda) &= \frac{1}{\beta^2}\,\sum_{k=1}^{\beta M}\sum_{k'=1}^{\beta N} I(k',k;m)\,f_{k'}(\ln\lambda-\Delta_k) \\
+    I(i,j;m) &\equiv\left\{\begin{array}{l}1~~\text{if}~~r_{m-1}<D_{A,j}\,|\alpha_i-\alpha_j|\leq r_m \\ 0~~\text{otherwise}\end{array}\right.~,
 \end{align}
 where $I()$ is an indicator function used to put ones on pairs that are ``in the bin'' and zeros on pairs that aren't,
 $r_m$ is the real-space proper radius of the outer edge of bin $m$,
