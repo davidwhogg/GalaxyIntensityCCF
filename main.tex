@@ -1,13 +1,19 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath,amsfonts,mathrsfs}
 
 % typesetting generalities
+\linespread{1.08}
 \sloppy\sloppypar\raggedbottom
 \frenchspacing % Don't even think about removing this.
 \pagestyle{myheadings}
 \markboth{foo}{\scshape%
 the galaxy--intensity cross-correlation function}
 \bibliographystyle{plain}
+
+% math macros
+\newcommand{\setof}[1]{\left\{{#1}\right\}}
+\newcommand{\set}[1]{\mathscr{#1}}
 
 \title{\bfseries%
 The projected three-dimensional cross-correlation of electromagnetic intensity and galaxies}
@@ -27,14 +33,23 @@ Note that we are using sky spectra here. But we could be using ANY spectra, prov
 
 \section{Setup and assumptions}
 We have a catalog from a redshift survey of galaxies, which contains $M$ galaxies $j$, with $1\leq j\leq M$, each of which has an accurately measured two-dimensional angular position $\alpha_j$, an accurately measured redshift $z_j$, and a set of other measured properties $Q_j$ (which might include luminosity, color, star-formation rate, stellar mass, or other measurements or inferences).
-We will assume that this sample is well selected and has sensible properties for the purposes of subsequent interpretations of the signals we find.
+In what follows, the set $\set{G}=\setof{\alpha_j, z_j}_{j=1}^M$ of position--redshift pairs is the \emph{galaxy set}.
+
+We will assume that this galaxy sample is well selected and has sensible properties for the purposes of subsequent interpretations of the signals we find.
 Interestingly, we do not need to know what's commonly called the ``window function'' for this sample; we don't need to know what sky footprint was used for the selection of the sample.
 Also, we are using the word ``galaxy'' but these could be quasars or x-ray selected clusters or any other kinds of cosmological objects.
 
 HOGG: ACTUALLY that's not quite true, because we also need a RANDOM catalog of not-galaxies with not-redshifts.
+HOGG believes that we can make the not-galaxy random catalog by just randomizing the redshifts of the galaxies relative to their celestial positions.
+That is, a fake catalog with $\beta\,M$ entries $k$ such that every celestial position $\alpha_k$ is drawn independently (with replacement) from among the $\setof{\alpha_j}_{j=1}^M$ and every redshift $z_k$ is drawn independently (with replacement) from among the $\setof{z_j}_{j=1}^M$.
+If we want good numerical stability, we probably want $\beta\gg 1$.
+Is HOGG's belief correct here?
+In what follows, the set $\set{G}_R=\setof{\alpha_k,z_k}_{k=1}^{\beta M}$ is the \emph{random galaxy set}.
 
 In addition, we have a set of $N$ spectra $f_i$, with $1\leq i\leq N$, taken at known two-dimensional sky positions $\alpha_i$.
 We will assume that these spectra are (at least approximately) wavelength calibrated, spectro-photometrically calibrated, and sky-subtracted.
+In what follows, the set $\set{S}=\setof{\alpha_i, f_i}_{i=1}^N$ of position--spectrum pairs is the \emph{spectrum set}.
+
 The spectro-photometric calibration requirements are not strong, but the project will work better as the spectra get closer to being calibrated.
 We will think of the spectra as being calibrated in either flux units (energy per time per area per log-wavelength interval) or else intensity units (flux units per solid angle of the fiber or aperture); since these are related by the solid-angles of the spectral apertures, we can convert everything to intensity units, and we will.
 Alternatively, the spectra could be in photon phase-space density units---this is also an invariant---but we will stay classical in what follows.
@@ -44,6 +59,13 @@ Variance in wavelength calibration and sky subtraction will reduce the signal-to
 The most important assumption we will make about these $N$ spectra is that the celestial positions $\alpha_i$ at which the spectra were taken are not directly related---neither biased towards or away from---the celestial positions $\alpha_j$ at which the galaxies are found.
 That is, there is a statistical independence of the ``footprints'' of the galaxy catalog and the spectral placement.
 
+In addition to the spectral set $\setof{\alpha_i, f_i}_{i=1}^N$ we will need a not-spectra random set.
+HOGG believes that we can make the not-spectra random catalog by just randomizing the spectra relative to their celestial positions.
+That is, a fake spectral set with $\beta\,N$ entries $\ell$ such that every celestial position $\alpha_\ell$ is drawn independently (with replacement) from among the $\setof{\alpha_i}_{i=1}^N$ and every spectrum $f_\ell$ is drawn independently (with replacement) from among the $\setof{f_i}_{i=1}^N$.
+Is HOGG's belief correct here?
+In what follows, the set $\set{S}_R=\setof{\alpha_k,f_k}_{k=1}^{\beta N}$ is the \emph{random spectrum set}.
+This $\beta$ doesn't have to be the same as the $\beta$ for the random galaxy set above, but it reduces our number of arbitrary choices if it is.
+
 HOGG: There is a two-point function in real space. There is a two-point function in redshift space. There are projections of this that are observable, and which are measured and then deprojected in present-day large-scale structure projects. This is what we will measure.
 
 HOGG: Note that everything is linear in the galaxies, and everything is linear in the spectra. So you can see this project as a sum over galaxies of one-galaxy surveys. Or a sum over spectra of one-spectrum measurements.
@@ -51,7 +73,23 @@ HOGG: Note that everything is linear in the galaxies, and everything is linear i
 In addition, we will assume that the background cosmological model is known precisely enough, and there are not pathologies like strong lensing significantly in play.
 
 \section{Methods and results}
-HOGG: 
+Fundamentally, the method is
+\begin{align}
+    w_m(\ln\lambda) &= DD_m(\ln\lambda) - DR_m(\ln\lambda) - RD_m(\ln\lambda) + RR_m(\ln\lambda) ~,
+\end{align}
+where $w_m(\ln\lambda)$ is the value of the two-dimensional projected real-space cross-correlation function (between intensity and galaxies) as a function of wavelength $\lambda$ in a projected real-space perpendicular radius bin indexed by $m$.
+The four terms on the RHS are defined as
+\begin{align}
+    DD_m(\ln\lambda) &= \sum_{j=1}^{M}\sum_{i=1}^N I(r_{m-1}<D_{A,j}\,|\alpha_i-\alpha_j|\leq r_m)\,f_i(\ln\lambda-\Delta_j) \\
+    DR_m(\ln\lambda) &= \frac{1}{\beta}\,\sum_{j=1}^{M}\sum_{k=1}^{\beta N} I(r_{m-1}<D_{A,j}\,|\alpha_k-\alpha_j|\leq r_m)\,f_k(\ln\lambda-\Delta_j) \\
+    RD_m(\ln\lambda) &= \frac{1}{\beta}\,\sum_{k=1}^{\beta M}\sum_{i=1}^N I(r_{m-1}<D_{A,k}\,|\alpha_i-\alpha_k|\leq r_m)\,f_i(\ln\lambda-\Delta_k) \\
+    RR_m(\ln\lambda) &= \frac{1}{\beta^2}\,\sum_{k=1}^{\beta M}\sum_{k'=1}^{\beta N} I(r_{m-1}<D_{A,k}\,|\alpha_{k'}-\alpha_k|\leq r_m)\,f_{k'}(\ln\lambda-\Delta_k) ~,
+\end{align}
+where $I()$ is an indicator function used to put ones on pairs that are ``in the bin'' and zeros on pairs that aren't,
+$r_m$ is the real-space proper radius of the outer edge of bin $m$,
+$D_{A,j}$ is the angular diameter distance (in the fiducial world model) to galaxy $j$,
+the spectra $f_i$ are being treated as functions of logarithmic wavelength (which maybe can be interpolated sensibly),
+and $\Delta_j$ is the log-wavelength Doppler shift corresponding to the redshift of galaxy $j$.
 
 \section{Discussion}
 
