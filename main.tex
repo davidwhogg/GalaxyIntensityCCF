@@ -38,6 +38,7 @@ Note that we are using sky spectra here. But we could be using ANY spectra, prov
 \section{Setup and assumptions}\label{sec:setup}
 We have a catalog from a redshift survey of galaxies, which contains $M$ galaxies $j$, with $1\leq j\leq M$, each of which has an accurately measured two-dimensional angular position $\alpha_j$, an accurately measured redshift $z_j$, and a set of other measured properties $Q_j$ (which might include luminosity, color, star-formation rate, stellar mass, or other measurements or inferences).
 In what follows, the set $\set{G}=\setof{\alpha_j, z_j}_{j=1}^M$ of position--redshift pairs is the \emph{galaxy set}.
+In what follows we will assume that the celestial positions $z_j$ and redshifts $z_j$ are both known so accurately that we don't need to track uncertainties on either.
 
 We will assume that this galaxy sample is well selected and has sensible properties for the purposes of subsequent interpretations of the signals we find.
 Interestingly, we do not need to know what's commonly called the ``window function'' for this sample; we don't need to know what sky footprint was used for the selection of the sample.
@@ -50,7 +51,13 @@ In \secref{sec:method} we will describe methods for making this random set witho
 
 In addition, we have a set of $N$ spectra $f_i$, with $1\leq i\leq N$, taken at known two-dimensional sky positions $\alpha_i$.
 We will assume that these spectra are (at least approximately) wavelength calibrated, spectro-photometrically calibrated, and sky-subtracted.
-In what follows, the set $\set{S}=\setof{\alpha_i, f_i}_{i=1}^N$ of position--spectrum pairs is the \emph{spectrum set}.
+In what follows we will think of the spectra $f_i$ as being functions of (logarithmic) observed-frame wavelength, possibly represented as values on a grid of extracted wavelengths.
+We will assume that the celestial positions $\alpha_i$ are very accurately known, but we will assume that the spectra $f_i$ are noisily known.
+That is, each spectrum $f_i(\ln\lambda)$, seen as a function of logarithmic wavelength $\ln\lambda$ has associated with it a weight function $w_i(\ln\lambda)$ which says, at each wavelength, how precisely we have measured the spectrum.
+These weights can be seen as inverse variances.
+Or they can be seen as products of exposure times with effective areas.
+They are supposed to represent the sensitivity (in an inverse-variance sense) of each measurement $f_i(\ln\lambda)$ at every wavelength $\lambda$.
+In what follows, the set $\set{S}=\setof{\alpha_i, f_i, w_i}_{i=1}^N$ of position--spectrum--weight triples is the \emph{spectrum set}.
 
 The spectro-photometric calibration requirements are not strong, but the project will work better as the spectra get closer to being calibrated.
 We will think of the spectra as being calibrated in either flux units (energy per time per area per log-wavelength interval) or else intensity units (flux units per solid angle of the fiber or aperture); since these are related by the solid-angles of the spectral apertures, we can convert everything to intensity units, and we will.
@@ -61,8 +68,8 @@ Variance in wavelength calibration and sky subtraction will reduce the signal-to
 The most important assumption we will make about these $N$ spectra is that the celestial positions $\alpha_i$ at which the spectra were taken are not directly related---neither biased towards or away from---the celestial positions $\alpha_j$ at which the galaxies are found.
 That is, there is a statistical independence of the ``footprints'' of the galaxy set and the spectral placement.
 
-In addition to the spectral set $\set{S}$ we will need a \emph{random spectrum set} $\set{S}_R=\setof{\alpha_k,f_k}_{k=1}^{\beta N}$, again larger than the real spectral set by a factor of $\beta$.
-Again we can make this directly from the spectral set provided that the selection procedure that effectively sets the spectrum distribution $p(f)$ does not depend on the sky position $\alpha$.
+In addition to the spectral set $\set{S}$ we will need a \emph{random spectrum set} $\set{S}_R=\setof{\alpha_k,f_k,w_k}_{k=1}^{\beta N}$, again larger than the real spectral set by a factor of $\beta$.
+Again we can make this directly from the spectral set provided that the selection procedure that effectively sets the spectrum distribution $p(f)$ and the weight distribution $p(w)$ does not depend on the sky position $\alpha$.
 This $\beta$ doesn't have to be the same as the $\beta$ for the random galaxy set above, but it reduces our number of arbitrary choices if it is.
 
 HOGG: There is a two-point function in real space. There is a two-point function in redshift space. There are projections of this that are observable, and which are measured and then deprojected in present-day large-scale structure projects. This is what we will measure.
@@ -79,24 +86,36 @@ Fundamentally, the method is
 where $w_m(\ln\lambda)$ is the value of the two-dimensional projected real-space cross-correlation function (between intensity and galaxies) as a function of logarithmic wavelength $\ln\lambda$ in a projected real-space perpendicular radius bin indexed by $m$.
 The four terms on the RHS are defined as
 \begin{align}
-    DD_m(\ln\lambda) &= \frac{1}{MN}\,\sum_{j=1}^{M}\sum_{i=1}^N I(i,j;m)\,f_i(\ln\lambda-\Delta_j) \\
-    DR_m(\ln\lambda) &= \frac{1}{\beta MN}\,\sum_{j=1}^{M}\sum_{k=1}^{\beta N} I(k,j;m)\,f_k(\ln\lambda-\Delta_j) \\
-    RD_m(\ln\lambda) &= \frac{1}{\beta MN}\,\sum_{k=1}^{\beta M}\sum_{i=1}^N I(i,k;m)\,f_i(\ln\lambda-\Delta_k) \\
-    RR_m(\ln\lambda) &= \frac{1}{\beta^2 MN}\,\sum_{k=1}^{\beta M}\sum_{k'=1}^{\beta N} I(k',k;m)\,f_{k'}(\ln\lambda-\Delta_k) \\
+    DD_m(\ln\lambda) &= \frac{%
+    \sum_{j\in\set{G}}\sum_{i\in\set{S}} I(i,j;m)\,w_i(\ln\lambda-\Delta_j)\,f_i(\ln\lambda-\Delta_j)}{%
+    \sum_{j\in\set{G}}\sum_{i\in\set{S}} I(i,j;m)\,w_i(\ln\lambda-\Delta_j)} \\
+    DR_m(\ln\lambda) &= \frac{%
+    \sum_{j\in\set{G}}\sum_{k\in\set{S}_R} I(k,j;m)\,w_k(\ln\lambda-\Delta_j)\,f_k(\ln\lambda-\Delta_j)}{%
+    \sum_{j\in\set{G}}\sum_{k\in\set{S}_R} I(k,j;m)\,w_k(\ln\lambda-\Delta_j)} \\
+    RD_m(\ln\lambda) &= \frac{%
+    \sum_{k\in\set{G}_R}\sum_{i\in\set{S}} I(i,k;m)\,w_i(\ln\lambda-\Delta_k)\,f_i(\ln\lambda-\Delta_k)}{%
+    \sum_{k\in\set{G}_R}\sum_{i\in\set{S}} I(i,k;m)\,w_i(\ln\lambda-\Delta_k)} \\
+    RR_m(\ln\lambda) &= \frac{%
+    \sum_{k\in\set{G}_R}\sum_{k'\in\set{S}_R} I(k',k;m)\,w_{k'}(\ln\lambda-\Delta_k)\,f_{k'}(\ln\lambda-\Delta_k)}{%
+    \sum_{k\in\set{G}_R}\sum_{k'\in\set{S}_R} I(k',k;m)\,w_{k'}(\ln\lambda-\Delta_k)} \\
     I(i,j;m) &\equiv\left\{\begin{array}{l}1~~\text{if}~~r_{m-1}<D_{A,j}\,|\alpha_i-\alpha_j|\leq r_m \\ 0~~\text{otherwise}\end{array}\right.~,
 \end{align}
-where $I()$ is an indicator function used to put ones on pairs that are ``in the bin'' and zeros on pairs that aren't,
+where
+$I()$ is an indicator function used to put ones on pairs that are ``in the bin'' and zeros on pairs that aren't,
 $r_m$ is the real-space proper radius of the outer edge of bin $m$,
 $D_{A,j}$ is the angular diameter distance (in the fiducial world model) to galaxy $j$,
-the spectra $f_i$ are being treated as functions of logarithmic wavelength (which maybe can be interpolated sensibly),
+the spectra $f_i$ and weights $w_i$ are being treated as functions of logarithmic wavelength (which maybe can be interpolated sensibly),
 and $\Delta_j$ is the log-wavelength Doppler shift corresponding to the redshift of galaxy $j$.
+Because the Doppler shifts appear in the arguments of the $f_i$ and $w_i$ functions, there is an interpolation question.
+HOGG RECOMMENDS that we just do nearest-neighbor interpolation to start!
 
 Sometimes the window functions are known explicitly.
 In this case, the random galaxy set and random spectrum set can both be made directly from these explicit window functions.
-If the window functions are not known, but it is believed that the selection function that sets the distribution $p(z)$ of galaxy redshifts in the sample does not depend on sky position $\alpha$, and if it is believed that the selection function that sets the distribution $p(f)$ of spectra obtained also does not depend on sky position $\alpha$, then there are ways to make the random sets empirically.
+If the window functions are not known, but it is believed that the selection function that sets the distribution $p(z)$ of galaxy redshifts in the sample does not depend on sky position $\alpha$, and if it is believed that the selection function that sets the distribution $p(f)$ of spectra and the distribution $p(w)$ of weights obtained also does not depend on sky position $\alpha$, then there are ways to make the random sets empirically.
 Here are two:
 In one, the random galaxy set $\set{G}_R$ is made by performing $\beta M$ independent draws (with replacement) from the real data positions $\alpha_j$ and then making the same number of (again) independent draws from the redshifts $z_j$.
-The random spectrum set $\set{S}_R$ is made similarly but with $\beta N$ draws from the $\alpha_i$ and $\beta N$ draws from the $f_i$. 
+The random spectrum set $\set{S}_R$ is made similarly but with $\beta N$ draws from the $\alpha_i$ and $\beta N$ draws from the $(f_i, w_i)$ pairs.
+That is, the positions are randomized relative to the spectra, but the weights stay with their associated spectra.
 The other method involves slightly non-independent draws:
 Copy each catalog (galaxies and spectra) $\beta$ times to make a bigger catalog, with every entry repeated exactly $\beta$ times.
 Then, for the galaxies, randomly shuffle the redshifts $z_k$ relative to the sky positions $\alpha_k$ to make $\set{G}_R$,
@@ -104,12 +123,6 @@ and, for the spectra, randomly shuffle the spectra $f_k$ relative to the sky pos
 That is, don't make the catalogs with random independent draws with replacement, but instead have every true position and true redshift and true spectrum appear exactly $\beta$ times in each random catalog.
 HOGG BELIEVES that the latter choice (the less independent choice) will reduce the variance of the estimator.
 It might also bias it, at least slightly?
-
-HOGG SAY: BECAUSE of the shift operators, there are edge issues, where there are lots of missing data in the spectral domain.
-Probably we should explicitly address these issues up-front.
-The solution is that we don't divide by $MN$ or $\beta MN$ but rather we divide by an explicit denominator that is the sum of the weights of the measured pixels.
-Or something like that?
-If we go this route (and we should), the inverse-variance weights need to get added to the description of the data in \secref{sec:setup} and the weights need to get explicitly used in the expressions above.
 
 \section{Discussion}\label{sec:discussion}
 
