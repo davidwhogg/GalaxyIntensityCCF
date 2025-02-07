@@ -1,3 +1,13 @@
+'''
+This script takes an analysis started in the first-look.ipynb notebook and runs it in parallel
+on a NERSC compute node.
+
+The notebook generates FITS tables of the galaxy sample and stuck-fibers to use.  This code
+goes to the DESI spectra files, opens them, and then for each nearby galaxy, pulls out a
+subsection of the spectrum.
+
+'''
+
 import pylab as plt
 import numpy as np
 from astrometry.util.fits import *
@@ -47,11 +57,13 @@ def main():
     # gals_sub.z = gals.z
     # gals_sub.writeto('/pscratch/sd/d/dstn/galaxy-sample-sub.fits')
 
+    # Read in the samples
     spec = fits_table('/pscratch/sd/d/dstn/stuck-sample-sub.fits')
     gals = fits_table('/pscratch/sd/d/dstn/galaxy-sample-sub.fits')
     sky_sample = spec
     print(len(sky_sample), 'sky fibers', len(gals), 'galaxies')
 
+    # Create the list of (all) the DESI spectro data products
     rr_bright_fns = glob('/global/cfs/cdirs/desi/spectro/redux/loa/healpix/main/bright/*/*/redrock-main-bright-*.fits')
     rr_bright_fns.sort()
     rr_dark_fns = [fn.replace('bright', 'dark') for fn in rr_bright_fns]
@@ -59,113 +71,13 @@ def main():
     fns = co_dark_fns
     print(len(fns), 'files')
 
+    # Cross-match the samples!
     Imatch = match_radec(sky_sample.target_ra, sky_sample.target_dec, gals.target_ra, gals.target_dec, 2./60., indexlist=True)
     print(sum([len(ii) for ii in Imatch if ii is not None]), 'matches')
-    #plt.hist([len(ii) if ii is not None else 0 for ii in Imatch], range=(0,10), bins=10);
 
-    # o3_fluxes = []
-    # o3_ivars = []
-    # o3_dists = []
-    # o3_gal_targetids = []
-    # o3_stuck_targetids = []
-    # 
-    # o2_fluxes = []
-    # o2_ivars = []
-    # o2_dists = []
-    # o2_gal_targetids = []
-    # o2_stuck_targetids = []
-    # 
-    # ha_fluxes = []
-    # ha_ivars = []
-    # ha_dists = []
-    # ha_gal_targetids = []
-    # ha_stuck_targetids = []
-
-    # 3726-3729 [OII] lines
-    # 6562      Halpha
-    # 6583      [NII]
-
+    # These are the targetids we want to read (and a mapping back to the index in the sky_sample)
     targetid_map = dict([(t,i) for i,t in enumerate(sky_sample.targetid) if Imatch[i] is not None])
     sample_targetids = list(targetid_map.keys())
-
-    # for ifn,fn in enumerate(fns):
-    #     if not os.path.exists(fn):
-    #         continue
-    #     fibermap = fits_table(fn)
-    #     I = np.flatnonzero(np.isin(fibermap.targetid, sample_targetids))
-    #     if len(I) == 0:
-    #         continue
-    #     F = fitsio.FITS(fn)
-    #     targetids = fibermap.targetid[I]
-    #     ras = fibermap.target_ra[I]
-    #     decs = fibermap.target_dec[I]
-    #     b_wave = F['B_WAVELENGTH'].read()
-    #     b_flux = F['B_FLUX'].read()[I, :]
-    #     b_ivar = F['B_IVAR'].read()[I, :]
-    #     r_wave = F['R_WAVELENGTH'].read()
-    #     r_flux = F['R_FLUX'].read()[I, :]
-    #     r_ivar = F['R_IVAR'].read()[I, :]
-    #     z_wave = F['Z_WAVELENGTH'].read()
-    #     z_flux = F['Z_FLUX'].read()[I, :]
-    #     z_ivar = F['Z_IVAR'].read()[I, :]
-    #     for ispec,(targetid,ra,dec) in enumerate(zip(targetids, ras, decs)):
-    #         isample = targetid_map[targetid]
-    #         for igal in Imatch[isample]:
-    #             z = gals.z[igal]
-    #             # Book-keeping check: sky_sample & galaxy match; this fibermap row matches
-    #             #print('Fibermap:', ra, 'Sky_sample:', sky_sample.target_ra[isample], 'gal:', gals.target_ra[igal])
-    #             d = degrees_between(ra, dec, gals.target_ra[igal], gals.target_dec[igal])
-    # 
-    #             # [OII]
-    #             target_restframe = 3726.
-    #             target_wave = target_restframe * (1. + z)
-    #             iwave = np.argmin(np.abs(b_wave - target_wave))
-    #             S = 40
-    #             #assert((iwave >= S) * (iwave < len(b_wave)-S))
-    #             if (iwave >= S) and (iwave < len(b_wave)-S):
-    #                 f   = b_flux[ispec, iwave-S : iwave+S+1]
-    #                 fiv = b_ivar[ispec, iwave-S : iwave+S+1]
-    #                 o2_fluxes.append(f)
-    #                 o2_ivars.append(fiv)
-    #                 o2_dists.append(d)
-    #                 o2_gal_targetids.append(gals.targetid[igal])
-    #                 o2_stuck_targetids.append(targetid)
-    # 
-    #             # [OIII]
-    #             target_restframe = 5007.
-    #             target_wave = target_restframe * (1. + z)
-    #             iwave = np.argmin(np.abs(r_wave - target_wave))
-    #             S = 40
-    #             #assert((iwave >= S) * (iwave < len(r_wave)-S))
-    #             if (iwave >= S) and (iwave < len(r_wave)-S):
-    #                 f   = r_flux[ispec, iwave-S : iwave+S+1]
-    #                 fiv = r_ivar[ispec, iwave-S : iwave+S+1]
-    #                 o3_fluxes.append(f)
-    #                 o3_ivars.append(fiv)
-    #                 o3_dists.append(d)
-    #                 o3_gal_targetids.append(gals.targetid[igal])
-    #                 o3_stuck_targetids.append(targetid)
-    # 
-    #             # H-alpha
-    #             target_restframe = 6562.
-    #             target_wave = target_restframe * (1. + z)
-    #             iwave = np.argmin(np.abs(z_wave - target_wave))
-    #             S = 60
-    #             #assert((iwave >= S) * (iwave < len(z_wave)-S))
-    #             if (iwave >= S) and (iwave < len(r_wave)-S):
-    #                 f   = z_flux[ispec, iwave-S : iwave+S+1]
-    #                 fiv = z_ivar[ispec, iwave-S : iwave+S+1]
-    #                 ha_fluxes.append(f)
-    #                 ha_ivars.append(fiv)
-    #                 ha_dists.append(d)
-    #                 ha_gal_targetids.append(gals.targetid[igal])
-    #                 ha_stuck_targetids.append(targetid)
-    #                 
-    # 
-    #     if ifn % 10 == 0:
-    #         print('.', end='')
-    #         sys.stdout.flush()
-    # print()
 
     # Read & process spectro files in parallel
     mp = multiproc(128)
@@ -236,7 +148,8 @@ def main():
     f.close()
 
 
-
+# For multiprocessing: process one DESI spectro file, pulling out our targetids of interest
+# and extracting the relevant portion of the spectrum.
 def one_file(fn):
     o3_fluxes = []
     o3_ivars = []
