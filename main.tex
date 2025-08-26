@@ -81,23 +81,20 @@ In addition, we will assume that the background cosmological model is known prec
 \section{Methods and results}\label{sec:method}
 Fundamentally, the method is
 \begin{align}
-    w_m(\ln\lambda) &= DD_m(\ln\lambda) - DR_m(\ln\lambda) - RD_m(\ln\lambda) + RR_m(\ln\lambda) ~,\label{eq:ls}
+    w_m(\ln\lambda) &= \frac{DD_m(\ln\lambda) - DR_m(\ln\lambda) - RD_m(\ln\lambda) + RR_m(\ln\lambda)}{RR_m(\ln\lambda)} ~,\label{eq:ls}
 \end{align}
 where $w_m(\ln\lambda)$ is the value of the two-dimensional projected real-space cross-correlation function (between intensity and galaxies) as a function of logarithmic wavelength $\ln\lambda$ in a projected real-space perpendicular radius bin indexed by $m$.
-The four terms on the RHS are defined as
+HOGG SAY: THE RR ON THE BOTTOM should be different than RR on the top if you want the units to be intensity units.
+The four numerator terms on the RHS are defined as
 \begin{align}
-    DD_m(\ln\lambda) &= \frac{%
-    \sum_{j\in\set{G}}\sum_{i\in\set{S}} I(i,j;m)\,w_i(\ln\lambda-\Delta_j)\,f_i(\ln\lambda-\Delta_j)}{%
-    \sum_{j\in\set{G}}\sum_{i\in\set{S}} I(i,j;m)\,w_i(\ln\lambda-\Delta_j)} \\
-    DR_m(\ln\lambda) &= \frac{%
-    \sum_{j\in\set{G}}\sum_{k\in\set{S}_R} I(k,j;m)\,w_k(\ln\lambda-\Delta_j)\,f_k(\ln\lambda-\Delta_j)}{%
-    \sum_{j\in\set{G}}\sum_{k\in\set{S}_R} I(k,j;m)\,w_k(\ln\lambda-\Delta_j)} \\
-    RD_m(\ln\lambda) &= \frac{%
-    \sum_{k\in\set{G}_R}\sum_{i\in\set{S}} I(i,k;m)\,w_i(\ln\lambda-\Delta_k)\,f_i(\ln\lambda-\Delta_k)}{%
-    \sum_{k\in\set{G}_R}\sum_{i\in\set{S}} I(i,k;m)\,w_i(\ln\lambda-\Delta_k)} \\
-    RR_m(\ln\lambda) &= \frac{%
-    \sum_{k\in\set{G}_R}\sum_{k'\in\set{S}_R} I(k',k;m)\,w_{k'}(\ln\lambda-\Delta_k)\,f_{k'}(\ln\lambda-\Delta_k)}{%
-    \sum_{k\in\set{G}_R}\sum_{k'\in\set{S}_R} I(k',k;m)\,w_{k'}(\ln\lambda-\Delta_k)} \\
+    DD_m(\ln\lambda) &= 
+    \sum_{j\in\set{G}}\sum_{i\in\set{S}} I(i,j;m)\,w_i(\ln\lambda-\Delta_j)\,f_i(\ln\lambda-\Delta_j) \\
+    DR_m(\ln\lambda) &= 
+    \sum_{j\in\set{G}}\sum_{k\in\set{S}_R} I(k,j;m)\,w_k(\ln\lambda-\Delta_j)\,f_k(\ln\lambda-\Delta_j) \\
+    RD_m(\ln\lambda) &= 
+    \sum_{k\in\set{G}_R}\sum_{i\in\set{S}} I(i,k;m)\,w_i(\ln\lambda-\Delta_k)\,f_i(\ln\lambda-\Delta_k) \\
+    RR_m(\ln\lambda) &= 
+    \sum_{k\in\set{G}_R}\sum_{k'\in\set{S}_R} I(k',k;m)\,w_{k'}(\ln\lambda-\Delta_k)\,f_{k'}(\ln\lambda-\Delta_k) \\
     I(i,j;m) &\equiv\left\{\begin{array}{l}1~~\text{if}~~r_{m-1}<D_{A,j}\,|\alpha_i-\alpha_j|\leq r_m \\ 0~~\text{otherwise}\end{array}\right.~,
 \end{align}
 where
@@ -127,10 +124,11 @@ It might also bias it, at least slightly?
 If you think about the estimated cross-correlation function $w_m(\ln\lambda)$ as a kind of mean spectrum of untargeted galaxies that are correlated with the targeted galaxies in the galaxy set, then other forms or estimators for $w_m(\ln\lambda)$ suggest themselves.
 Two that come to mind are
 \begin{align}
-    w_m(\ln\lambda) &= DD_m(\ln\lambda) - DR_m(\ln\lambda) \\
-    w_m(\ln\lambda) &= DD_m(\ln\lambda) - RD_m(\ln\lambda) ~.
+    w_m(\ln\lambda) &= \frac{DD_m(\ln\lambda) - DR_m(\ln\lambda)}{DR_m(\ln\lambda)} \\
+    w_m(\ln\lambda) &= \frac{DD_m(\ln\lambda) - RD_m(\ln\lambda)}{RD_m(\ln\lambda)} ~.
 \end{align}
 These two forms may be just as good as method \eqref{eq:ls} above, and may be easier to compute for various pragmatic reasons.
+HOGG SAY: IF we appropriately modify the denominator terms, these become background-subtracted mean intensities, or ``average spectra''.
 
 HOGG SAY: Technically the cross-correlation function should be dimensionless!
 These expressions have units of flux $f$.
